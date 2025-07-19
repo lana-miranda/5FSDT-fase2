@@ -4,63 +4,66 @@ import { parseObject, TParseOnError } from 'jet-validators/utils';
 import { isRelationalKey, transIsDate } from '@src/common/util/validators';
 import { IModel } from './common/types';
 
-
 /******************************************************************************
                                  Constants
 ******************************************************************************/
 
-const DEFAULT_USER_VALS = (): IUser => ({
+const DEFAULT_POST_VALS = (): IPost => ({
   id: -1,
-  name: '',
-  created: new Date(),
-  email: '',
+  title: '',
+  summary: '',
+  content: '',
+  teacherId: -1,
+  createdAt: new Date(),
+  updatedAt: new Date(),
 });
-
 
 /******************************************************************************
                                   Types
 ******************************************************************************/
 
-export interface IUser extends IModel {
-  name: string;
-  email: string;
+export interface IPost extends IModel {
+  title: string;
+  summary: string;
+  content: string;
+  teacherId: number;
 }
-
 
 /******************************************************************************
                                   Setup
 ******************************************************************************/
 
-// Initialize the "parseUser" function
-const parseUser = parseObject<IUser>({
+// Initialize the "parsePost" function
+const parsePost = parseObject<IPost>({
   id: isRelationalKey,
-  name: isString,
-  email: isString,
-  created: transIsDate,
+  title: isString,
+  summary: isString,
+  content: isString,
+  teacherId: isRelationalKey,
+  createdAt: transIsDate,
+  updatedAt: transIsDate,
 });
-
 
 /******************************************************************************
                                  Functions
 ******************************************************************************/
 
 /**
- * New user object.
+ * New post object.
  */
-function __new__(user?: Partial<IUser>): IUser {
-  const retVal = { ...DEFAULT_USER_VALS(), ...user };
-  return parseUser(retVal, errors => {
-    throw new Error('Setup new user failed ' + JSON.stringify(errors, null, 2));
+function __new__(post?: Partial<IPost>): IPost {
+  const retVal = { ...DEFAULT_POST_VALS(), ...post };
+  return parsePost(retVal, (errors) => {
+    throw new Error('Setup new post failed ' + JSON.stringify(errors, null, 2));
   });
 }
 
 /**
- * Check is a user object. For the route validation.
+ * Check is a post object. For the route validation.
  */
-function test(arg: unknown, errCb?: TParseOnError): arg is IUser {
-  return !!parseUser(arg, errCb);
+function test(arg: unknown, errCb?: TParseOnError): arg is IPost {
+  return !!parsePost(arg, errCb);
 }
-
 
 /******************************************************************************
                                 Export default

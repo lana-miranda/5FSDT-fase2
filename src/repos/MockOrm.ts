@@ -2,28 +2,22 @@ import jsonfile from 'jsonfile';
 
 import ENV from '@src/common/constants/ENV';
 import { NodeEnvs } from '@src/common/constants';
-import { IUser } from '@src/models/User';
-
+import { IPost } from '@src/models/Post';
 
 /******************************************************************************
                                 Constants
 ******************************************************************************/
 
-const DB_FILE_NAME = (
-  ENV.NodeEnv === NodeEnvs.Test 
-    ? 'database.test.json' 
-    : 'database.json'
-);
-
+const DB_FILE_NAME =
+  ENV.NodeEnv === NodeEnvs.Test ? 'database.test.json' : 'database.json';
 
 /******************************************************************************
                                 Types
 ******************************************************************************/
 
 interface IDb {
-  users: IUser[];
+  posts: IPost[];
 }
-
 
 /******************************************************************************
                                 Functions
@@ -40,16 +34,15 @@ function openDb(): Promise<IDb> {
  * Update the file.
  */
 function saveDb(db: IDb): Promise<void> {
-  return jsonfile.writeFile((__dirname + '/' + DB_FILE_NAME), db);
+  return jsonfile.writeFile(__dirname + '/' + DB_FILE_NAME, db);
 }
 
 /**
  * Empty the database
  */
 function cleanDb(): Promise<void> {
-  return jsonfile.writeFile((__dirname + '/' + DB_FILE_NAME), {});
+  return jsonfile.writeFile(__dirname + '/' + DB_FILE_NAME, {});
 }
-
 
 /******************************************************************************
                                 Export default
