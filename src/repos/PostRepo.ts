@@ -90,7 +90,7 @@ async function delete_(id: number): Promise<void> {
 async function search(query: string): Promise<IPost[]> {
   const db = await orm.openDb();
   return db.posts.filter(
-    (post) => post.title.includes(query) || post.summary.includes(query)
+    (post) => post.title.includes(query) || post.summary.includes(query),
   );
 }
 

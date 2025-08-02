@@ -72,7 +72,7 @@ describe('PostRouter', () => {
         const res: TRes<{ posts: IPost[] }> = await agent.get(Paths.Posts.Base);
         expect(res.status).toBe(HttpStatusCodes.OK);
         expect(comparePostArrays(res.body.posts, DB_POSTS)).toBeTruthy();
-      }
+      },
     );
   });
 
@@ -91,7 +91,7 @@ describe('PostRouter', () => {
           }),
           res = await agent.post(Paths.Posts.Base).send({ post });
         expect(res.status).toBe(HttpStatusCodes.CREATED);
-      }
+      },
     );
 
     // Missing param
@@ -107,7 +107,7 @@ describe('PostRouter', () => {
         const errorObj = parseValidationErr(res.body.error);
         expect(errorObj.message).toBe(ValidationError.MESSAGE);
         expect(errorObj.errors[0].prop).toBe('post');
-      }
+      },
     );
   });
 
@@ -122,7 +122,7 @@ describe('PostRouter', () => {
         post.title = 'New Title';
         const res = await agent.put(getPathById(post.id)).send({ post });
         expect(res.status).toBe(HttpStatusCodes.OK);
-      }
+      },
     );
 
     // Id is the wrong data type
@@ -138,7 +138,7 @@ describe('PostRouter', () => {
         expect(errorObj.message).toBe(ValidationError.MESSAGE);
         expect(errorObj.errors[0].prop).toBe('post');
         expect(errorObj.errors[0].children?.[0].prop).toBe('id');
-      }
+      },
     );
 
     // Post not found
@@ -157,7 +157,7 @@ describe('PostRouter', () => {
           res: TRes = await agent.put(getPathById(post.id)).send({ post });
         expect(res.status).toBe(HttpStatusCodes.NOT_FOUND);
         expect(res.body.error).toBe(POST_NOT_FOUND_ERR);
-      }
+      },
     );
   });
 
@@ -171,7 +171,7 @@ describe('PostRouter', () => {
         const id = dbPosts[0].id,
           res = await agent.delete(getPathById(id));
         expect(res.status).toBe(HttpStatusCodes.OK);
-      }
+      },
     );
 
     // Post not found
@@ -183,7 +183,7 @@ describe('PostRouter', () => {
         const res: TRes = await agent.delete(getPathById(-1));
         expect(res.status).toBe(HttpStatusCodes.NOT_FOUND);
         expect(res.body.error).toBe(POST_NOT_FOUND_ERR);
-      }
+      },
     );
   });
 });
