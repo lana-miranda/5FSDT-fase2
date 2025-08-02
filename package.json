@@ -1,6 +1,6 @@
 {
-  "name": "5FSDT-fase2",
-  "version": "0.0.0",
+  "name": "5fsdt_fase2",
+  "version": "1.0.0",
   "scripts": {
     "build": "ts-node ./scripts/build.ts",
     "clean-install": "rm -rf ./node_modules && rm -r package-lock.json && npm i",
@@ -12,7 +12,7 @@
     "type-check": "tsc --noEmit"
   },
   "engines": {
-    "node": ">=16.0.0"
+    "node": "=23.11.0"
   },
   "dependencies": {
     "cookie-parser": "^1.4.7",
