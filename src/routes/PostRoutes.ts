@@ -47,9 +47,10 @@ async function getById(req: IReq, res: IRes) {
  * Add one post.
  */
 async function add(req: IReq, res: IRes) {
+  const toBeCreated = req.body.post ?? null;
   const { post } = Validators.add({
     ...req.body,
-    post: Post.new(req.body.post ?? {}),
+    post: toBeCreated && Post.new(toBeCreated),
   });
   await PostService.addOne(post);
   res.status(HttpStatusCodes.CREATED).end();
@@ -60,12 +61,10 @@ async function add(req: IReq, res: IRes) {
  */
 async function update(req: IReq, res: IRes) {
   const { id } = Validators.getIdFromParams(req.params);
+  const toBeUpdated = req.body.post ?? null;
   const { post } = Validators.update({
     ...req.body,
-    post: {
-      ...Post.new({ ...(req.body.post ?? {}) }),
-      id,
-    },
+    post: toBeUpdated && { ...Post.new(toBeUpdated), id },
   });
   await PostService.updateOne(post);
   res.status(HttpStatusCodes.OK).end();

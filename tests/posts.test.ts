@@ -145,14 +145,11 @@ describe('PostRouter', () => {
       'should return a JSON object with an error message and a status code ' +
         `of "${HttpStatusCodes.BAD_REQUEST}" if the post param was missing`,
       async () => {
-        const post = Post.new();
-        post.id = '5' as unknown as number;
-        const res: TRes = await agent.put(getPathById(post.id)).send({ post });
+        const res: TRes = await agent.put(getPathById(1)).send({});
         expect(res.status).toBe(HttpStatusCodes.BAD_REQUEST);
         const errorObj = parseValidationErr(res.body.error);
         expect(errorObj.message).toBe(ValidationError.MESSAGE);
         expect(errorObj.errors[0].prop).toBe('post');
-        expect(errorObj.errors[0].children?.[0].prop).toBe('id');
         expect(PostRepo.getOne).not.toHaveBeenCalled();
         expect(PostRepo.update).not.toHaveBeenCalled();
       },
