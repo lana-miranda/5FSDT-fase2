@@ -28,6 +28,7 @@
     "scripts",
     "eslint.config.ts",
     "vitest.config.mts",
+    "src/repos/seeds.sql"
   ],
   "exclude": [
     "src/public/*"

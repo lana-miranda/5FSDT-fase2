@@ -15,7 +15,7 @@ import { parseReq } from './common/util';
 const Validators = {
   add: parseReq({ post: Post.test }),
   update: parseReq({ post: Post.test }),
-  delete: parseReq({ id: transform(Number, isNumber) }),
+  getIdFromParams: parseReq({ id: transform(Number, isNumber) }),
 } as const;
 
 /******************************************************************************
@@ -34,7 +34,7 @@ async function getAll(_: IReq, res: IRes) {
  * Get one post by their id.
  */
 async function getById(req: IReq, res: IRes) {
-  const { id } = Validators.delete(req.params);
+  const { id } = Validators.getIdFromParams(req.params);
   const post = await PostService.getById(id);
   if (!post) {
     res.status(HttpStatusCodes.NOT_FOUND).end();
@@ -47,7 +47,11 @@ async function getById(req: IReq, res: IRes) {
  * Add one post.
  */
 async function add(req: IReq, res: IRes) {
-  const { post } = Validators.add(req.body);
+  const toBeCreated = req.body.post ?? null;
+  const { post } = Validators.add({
+    ...req.body,
+    post: toBeCreated && Post.new(toBeCreated),
+  });
   await PostService.addOne(post);
   res.status(HttpStatusCodes.CREATED).end();
 }
@@ -56,7 +60,12 @@ async function add(req: IReq, res: IRes) {
  * Update one post.
  */
 async function update(req: IReq, res: IRes) {
-  const { post } = Validators.update(req.body);
+  const { id } = Validators.getIdFromParams(req.params);
+  const toBeUpdated = req.body.post ?? null;
+  const { post } = Validators.update({
+    ...req.body,
+    post: toBeUpdated && { ...Post.new(toBeUpdated), id },
+  });
   await PostService.updateOne(post);
   res.status(HttpStatusCodes.OK).end();
 }
@@ -64,9 +73,9 @@ async function update(req: IReq, res: IRes) {
 /**
  * Delete one post.
  */
-async function delete_(req: IReq, res: IRes) {
-  const { id } = Validators.delete(req.params);
-  await PostService.delete(id);
+async function remove(req: IReq, res: IRes) {
+  const { id } = Validators.getIdFromParams(req.params);
+  await PostService.remove(id);
   res.status(HttpStatusCodes.OK).end();
 }
 
@@ -92,6 +101,6 @@ export default {
   getById,
   add,
   update,
-  delete: delete_,
+  remove,
   search,
 } as const;

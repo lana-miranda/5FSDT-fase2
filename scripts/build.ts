@@ -11,7 +11,6 @@ import childProcess from 'child_process';
     await remove('./dist/');
     await exec('tsc --build tsconfig.prod.json', './');
     // Copy
-    await copy('./src/repos/database.json', './dist/repos/database.json'); // todo: remove this after database is migrated to Postgres
     await copy('./temp/config.js', './config.js');
     await copy('./temp/src', './dist');
     await remove('./temp/');

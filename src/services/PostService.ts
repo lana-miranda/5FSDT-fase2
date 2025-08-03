@@ -4,15 +4,7 @@ import HttpStatusCodes from '@src/common/constants/HttpStatusCodes';
 import PostRepo from '@src/repos/PostRepo';
 import { IPost } from '@src/models/Post';
 
-/******************************************************************************
-                                Constants
-******************************************************************************/
-
 export const POST_NOT_FOUND_ERR = 'Post not found';
-
-/******************************************************************************
-                                Functions
-******************************************************************************/
 
 /**
  * Get all posts.
@@ -45,8 +37,8 @@ function addOne(post: IPost): Promise<void> {
  * Update one post.
  */
 async function updateOne(post: IPost): Promise<void> {
-  const persists = await PostRepo.persists(post.id);
-  if (!persists) {
+  const exists = await PostRepo.getOne(post.id);
+  if (!exists) {
     throw new RouteError(HttpStatusCodes.NOT_FOUND, POST_NOT_FOUND_ERR);
   }
   // Return post
@@ -56,13 +48,13 @@ async function updateOne(post: IPost): Promise<void> {
 /**
  * Delete a post by their id.
  */
-async function _delete(id: number): Promise<void> {
-  const persists = await PostRepo.persists(id);
-  if (!persists) {
+async function remove(id: number): Promise<void> {
+  const exists = await PostRepo.getOne(id);
+  if (!exists) {
     throw new RouteError(HttpStatusCodes.NOT_FOUND, POST_NOT_FOUND_ERR);
   }
   // Delete post
-  return PostRepo.delete(id);
+  return PostRepo.remove(id);
 }
 
 /**
@@ -72,15 +64,11 @@ async function search(query: string): Promise<IPost[]> {
   return PostRepo.search(query);
 }
 
-/******************************************************************************
-                                Export default
-******************************************************************************/
-
 export default {
   getAll,
   getById,
   addOne,
   updateOne,
-  delete: _delete,
+  remove,
   search,
 } as const;
