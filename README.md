@@ -1,58 +1,33 @@
-## About
+## Sobre o projeto
 
-This project was created with [express-generator-typescript](https://github.com/seanpmaxwell/express-generator-typescript).
+Esse projeto é a entrega do Tech Challenge da fase 2 da pós em Full Stack Developement.
 
-**IMPORTANT** for demo purposes I had to disable `helmet` in production. In any real world app you should change these 3 lines of code in `src/server.ts`:
+## Definições técnicas
 
-```ts
-// eslint-disable-next-line n/no-process-env
-if (!process.env.DISABLE_HELMET) {
-  app.use(helmet());
-}
-```
+- Backend em Node.js com Typescript
+- Express para criação das rotas de API
+- Banco de dados PostgreSQL
+- Docker compose para rodar a aplicação local
+- Vitest para testes automatizados
 
-To just this:
+## Como rodar a aplicação local
 
-```ts
-app.use(helmet());
-```
+- Único requisito é ter Docker e Docker Compose instalado.
+- Não é necessário nenhuma configuração.
 
-## Available Scripts
+### Comando para inicializar
 
-### `npm run clean-install`
+> docker-compose --env-file ./config/.env.development up
 
-Remove the existing `node_modules/` folder, `package-lock.json`, and reinstall all library modules.
+### URL da API de posts
 
-### `npm run dev` or `npm run dev:hot` (hot reloading)
+http://localhost:3000/api/posts
 
-Run the server in development mode.<br/>
+### Endpoints disponíveis
 
-**IMPORTANT** development mode uses `swc` for performance reasons which DOES NOT check for typescript errors. Run `npm run type-check` to check for type errors. NOTE: you should use your IDE to prevent most type errors.
-
-### `npm test` or `npm run test:hot` (hot reloading)
-
-Run all unit-tests.
-
-### `npm test -- "name of test file" (i.e. users).`
-
-Run a single unit-test.
-
-### `npm run lint`
-
-Check for linting errors.
-
-### `npm run build`
-
-Build the project for production.
-
-### `npm start`
-
-Run the production build (Must be built first).
-
-### `npm run type-check`
-
-Check for typescript errors.
-
-## Additional Notes
-
-- If `npm run dev` gives you issues with bcrypt on MacOS you may need to run: `npm rebuild bcrypt --build-from-source`.
+- GET /posts - Lista de Posts
+- GET /posts/:id - Leitura de Posts
+- POST /posts - Criação de Postagens
+- PUT /posts/:id
+- DELETE /posts/:id
+- GET /posts/search
