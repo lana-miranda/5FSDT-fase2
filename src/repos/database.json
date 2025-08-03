@@ -1,1 +1,0 @@
-{"posts":[{"id":2,"title":"Second post","summary":"second post summary","content":"Content of the second post","teacherId":2,"createdAt":"2023-10-02T12:00:00Z","updatedAt":"2023-10-02T12:00:00Z"},{"id":3,"title":"Third post","summary":"third post summary","content":"Content of the third post","teacherId":1,"createdAt":"2023-10-03T12:00:00Z","updatedAt":"2023-10-03T12:00:00Z"}]}

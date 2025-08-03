@@ -31,3 +31,17 @@ http://localhost:3000/api/posts
 - PUT /posts/:id
 - DELETE /posts/:id
 - GET /posts/search
+
+## Tests
+
+Para rodar os testes
+
+> npm test
+
+Para verificar a cobertura de tests
+
+> npm run coverage
+
+## Postman
+
+https://www.postman.com/winter-robot-868542/5fsdt-fase2/collection/sdjtvq4/api?action=share&source=copy-link&creator=47293451

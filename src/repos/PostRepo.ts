@@ -1,138 +1,82 @@
 import { IPost } from '@src/models/Post';
-import { getRandomInt } from '@src/common/util/misc';
 
-import orm from './MockOrm';
-
-/******************************************************************************
-                                Functions
-******************************************************************************/
+import pg from '@src/repos/pg';
 
 /**
  * Get one post.
  */
 async function getOne(id: number): Promise<IPost | null> {
-  const db = await orm.openDb();
-  for (const post of db.posts) {
-    if (post.id === id) {
-      return post;
-    }
-  }
-  return null;
-}
-
-/**
- * See if a post with the given id exists.
- */
-async function persists(id: number): Promise<boolean> {
-  const db = await orm.openDb();
-  for (const post of db.posts) {
-    if (post.id === id) {
-      return true;
-    }
-  }
-  return false;
+  const db = await pg();
+  const sql = 'SELECT * FROM posts WHERE id = $1';
+  const found = await db.query<IPost>(sql, [id]);
+  return found.rows[0] || null;
 }
 
 /**
  * Get all posts.
  */
 async function getAll(): Promise<IPost[]> {
-  const db = await orm.openDb();
-  return db.posts;
+  const db = await pg();
+  const sql = 'SELECT * FROM posts';
+  const result = await db.query<IPost>(sql);
+  return result.rows;
 }
 
 /**
  * Add one post.
  */
 async function add(post: IPost): Promise<void> {
-  const db = await orm.openDb();
-  post.id = getRandomInt();
-  db.posts.push(post);
-  return orm.saveDb(db);
+  const db = await pg();
+  const sql = `
+    INSERT INTO posts (title, summary, content, teacher_id)
+    VALUES ($1, $2, $3, $4)
+  `;
+  await db.query(sql, [post.title, post.summary, post.content, post.teacherId]);
 }
 
 /**
  * Update a post.
  */
 async function update(post: IPost): Promise<void> {
-  const db = await orm.openDb();
-  for (let i = 0; i < db.posts.length; i++) {
-    if (db.posts[i].id === post.id) {
-      const dbPost = db.posts[i];
-      db.posts[i] = {
-        ...dbPost,
-        title: post.title,
-        summary: post.summary,
-        content: post.content,
-        teacherId: post.teacherId,
-      };
-      return orm.saveDb(db);
-    }
-  }
+  const db = await pg();
+  const sql = `
+    UPDATE posts 
+    SET title = $1, summary = $2, content = $3, teacher_id = $4
+    WHERE id = $5
+  `;
+  await db.query(sql, [
+    post.title,
+    post.summary,
+    post.content,
+    post.teacherId,
+    post.id,
+  ]);
 }
 
 /**
  * Delete one post.
  */
-async function delete_(id: number): Promise<void> {
-  const db = await orm.openDb();
-  for (let i = 0; i < db.posts.length; i++) {
-    if (db.posts[i].id === id) {
-      db.posts.splice(i, 1);
-      return orm.saveDb(db);
-    }
-  }
+async function remove(id: number): Promise<void> {
+  const db = await pg();
+  const sql = 'DELETE FROM posts WHERE id = $1';
+  await db.query(sql, [id]);
 }
 
 /**
  * Search posts by title or summary.
  */
 async function search(query: string): Promise<IPost[]> {
-  const db = await orm.openDb();
-  return db.posts.filter(
-    (post) => post.title.includes(query) || post.summary.includes(query),
-  );
+  const db = await pg();
+  const sql = 'SELECT * FROM posts WHERE title ILIKE $1 OR summary ILIKE $1';
+  const result = await db.query<IPost>(sql, [`%${query}%`]);
+  return result.rows;
 }
-
-// **** Unit-Tests Only **** //
-
-/**
- * Delete every post record.
- */
-async function deleteAllPosts(): Promise<void> {
-  const db = await orm.openDb();
-  db.posts = [];
-  return orm.saveDb(db);
-}
-
-/**
- * Insert multiple posts. Can't do multiple at once cause using a plain file
- * for nmow.
- */
-async function insertMult(posts: IPost[] | readonly IPost[]): Promise<IPost[]> {
-  const db = await orm.openDb(),
-    postsF = [...posts];
-  for (const post of postsF) {
-    post.id = getRandomInt();
-    post.createdAt = new Date();
-  }
-  db.posts = [...db.posts, ...posts];
-  await orm.saveDb(db);
-  return postsF;
-}
-
-/******************************************************************************
-                                Export default
-******************************************************************************/
 
 export default {
   getOne,
-  persists,
   getAll,
   add,
   update,
-  delete: delete_,
+  remove,
   search,
-  deleteAllPosts,
-  insertMult,
 } as const;
